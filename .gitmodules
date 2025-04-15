@@ -1,0 +1,7 @@
+[submodule "thirdparty/amrex"]
+	path = thirdparty/amrex
+	url = https://github.com/AMReX-Codes/amrex.git
+[submodule "thirdparty/reflect-cpp"]
+	path = thirdparty/reflect-cpp
+	url = git@github.com:getml/reflect-cpp.git
+	tag = v0.18.0
