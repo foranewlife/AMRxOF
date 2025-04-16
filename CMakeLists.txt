@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 4.0)
+cmake_minimum_required(VERSION 3.10)
 # Include CPM.cmake for package management
 include(cmake/CPM.cmake)
 
@@ -105,4 +105,13 @@ include_directories(${CMAKE_BINARY_DIR}/_deps/reflect-cpp-src/include)
 
 add_executable(amrxof src/main.cpp)
 target_link_libraries(amrxof PRIVATE AMReX::amrex reflectcpp toml11::toml11)
+
+# enable_testing()
+
+# # Add test executable
+# add_executable(test_amrxof test/test_main.cpp)
+# target_link_libraries(test_amrxof PRIVATE AMReX::amrex reflectcpp toml11::toml11)
+
+# # Add the test to ctest
+# add_test(NAME TestAMRxOF COMMAND test_amrxof)
 

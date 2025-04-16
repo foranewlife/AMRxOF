@@ -4,54 +4,29 @@
 #include <iostream>
 #include <string>
 #include <rfl.hpp>
+#include <rfl/toml.hpp>
 #include "config.hpp"
 
-namespace test_readme_example {
-
-    using Age = rfl::Validator<unsigned int, rfl::Minimum<0>, rfl::Maximum<130>>;
-    
-    struct Person {
-      rfl::Rename<"firstName", std::string> first_name;
-      rfl::Rename<"lastName", std::string> last_name = "Simpson";
-      std::string town = "Springfield";
-      rfl::Timestamp<"%Y-%m-%d"> birthday;
-      Age age;
-      rfl::Email email;
-      std::vector<Person> child;
-    };
-};
-
-
-int main(int argc, char* argv[])
+int main(int argc, char *argv[])
 {
     // 禁用 AMReX 的 ParmParse 自动解析
     amrex::Initialize(argc, argv);
-
-    // 示例：创建一个 Person 对象
-    const auto bart = test_readme_example::Person{
-        .first_name = "Bart",
-        .birthday = "1987-04-19",
-        .age = 10,
-        .email = "bart@simpson.com"};
-
-        try {
-            std::ofstream toml_file("output.toml");
-            if (!toml_file) {
-                throw std::ios_base::failure("Failed to open file");
-            }
-            rfl::toml::write(bart, toml_file);
-            toml_file.close();
-        } catch (const std::exception& e) {
-            std::cerr << "Error writing to TOML file: " << e.what() << std::endl;
-        }
-
-    // amrex::Print() << "Person details:\n";
-    // amrex::Print() << "First Name: " << bart.first_name << "\n";
-    // amrex::Print() << "Last Name: " << bart.last_name << "\n";
-    // amrex::Print() << "Town: " << bart.town << "\n";
-    // amrex::Print() << "Age: " << bart.age << "\n";
-    // amrex::Print() << "Email: " << bart.email << "\n";
+    auto kedf = Config::Kedf{.kedf_name = Config::KedfName::make<"TF">()};
+    auto pesudo_files = std::map<Config::ElementName, std::string>();
+    pesudo_files.insert(std::make_pair("H", "H.pbe-rrkjus.UPF"));
+    auto ion_elec = Config::IonElec{.pseudo_files = std::move(pesudo_files)};
+    auto exc = Config::Exc{.exchange_name = Config::ExcName::make<"LDA">()};
+    auto crystal = Config::Crystal{.crystal_file = "crystal.cif"};
+    auto task = Config::Task{.name = Config::TaskName::make<"SinglePoint">()};
+    auto config = Config::Config{
+        .task = task,
+        .crystal = crystal,
+        .kedf = kedf,
+        .ion_elec = ion_elec,
+        .exc = exc};
+    // 将配置写入文件
+    std::ofstream config_file("config.toml");
+    rfl::toml::write(config, config_file);
 
     amrex::Finalize();
 }
-
