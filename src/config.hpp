@@ -41,7 +41,7 @@ namespace Config
     };
     struct IonElec
     {
-        std::map<ElementName, std::string> pseudo_files;
+        rfl::Rename<"files", std::map<ElementName, std::string>> pseudo_files;
     };
 
     struct Exc
